@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>常温鶴見店舗カルテ</title>
+    <!-- Google Fonts: カービィのような可愛らしいフォントをイメージして "Mochiy Pop P One" と "Hachi Maru Pop" を追加 -->
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
+    <style>
+        /* カービィ世界観の全体スタイル */
+        body {
+            font-family: 'Hachi Maru Pop', cursive; /* カービィのような可愛らしいフォント */
+            color: #333; /* 読みやすい濃い文字色 */
+            /* 白系の背景グラデーション（雲やふわふわ感をイメージ） */
+            background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 100%); /* アリスブルーから白へ */
+            margin: 0; /* body のマージンを0に設定 */
+            padding: 0; /* body のパディングを0に設定 */
+            text-align: center;
+            line-height: 1.6; /* 行の高さを調整して読みやすく */
+            overflow-x: hidden; /* 横方向のスクロールバーが出ないように */
+        }
+
+        h1, h3 {
+            font-family: 'Mochiy Pop P One', sans-serif; /* ポップで見出しに合うフォント */
+            color: #ff69b4; /* ホットピンク（カービィの色） */
+            text-shadow: 2px 2px 5px rgba(255, 105, 180, 0.4), 0 0 10px rgba(255, 255, 255, 0.7); /* ポップで明るい影 */
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 3px solid #add8e6; /* ライトブルーの枠線（空や水のイメージ） */
+            border-radius: 20px; /* 丸みを帯びた角 */
+            background-color: rgba(255, 255, 255, 0.9); /* 半透明の白背景 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1), 0 0 20px rgba(173, 216, 230, 0.4); /* 柔らかい影と水色の光 */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(2px); /* 背景を少しぼかす */
+        }
+
+        /* 既存の img スタイルはそのまま */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 15px auto 0;
+            border: 3px solid #ffb6c1; /* ライトピンクの枠線 */
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.7); /* 柔らかく光る影 */
+            border-radius: 10px; /* 角を丸める */
+        }
+
+        /* image-header のスタイル変更 (position: relative と overflow: hidden を追加) */
+        .image-header {
+            position: relative; /* 子要素のトラックを絶対配置するために必要 */
+            max-width: 800px;
+            margin: 0 auto 20px auto; /* 中央寄せと下マージン */
+            overflow: hidden; /* この枠からはみ出したコンテンツを非表示にする */
+            border-radius: 10px; /* 角を丸める */
+        }
+        .image-header > img { /* image-header直下のimgにのみ適用 */
+            width: 100%;
+            height: auto; /* 高さは自動調整 */
+            display: block;
+            margin: 0 auto;
+            border: none;
+            box-shadow: none;
+            border-radius: 0; /* image-header 自体に border-radius を設定するため、こちらは不要 */
+        }
+
+        /* トラックのエフェクト用スタイル */
+        .truck-effect {
+            position: absolute;
+            bottom: 0; /* 親要素の一番下に配置 */
+            height: auto;
+            z-index: 10;
+            display: block; /* 初期表示をblockにする（JSで生成されるため） */
+            animation-iteration-count: 1; /* 各トラックは一度だけ動く */
+            animation-fill-mode: forwards; /* アニメーション終了時の状態を維持 */
+            animation-timing-function: linear; /* 線形アニメーション */
+            /* 新しく追加する揺れアニメーションのための設定 */
+            transform-origin: bottom center; /* 揺れの中心をトラックの下部に設定 */
+        }
+
+        .truck-effect img {
+            height: 80px; /* トラック画像の高さを調整 (必要に応じて調整) */
+            width: auto;
+            display: block;
+            margin: 0; /* imgのデフォルトマージンをリセット */
+            border: none;
+            box-shadow: none;
+            max-width: none; /* 親要素の max-width に影響されないように */
+        }
+
+        /* 右から左へ走るトラック */
+        .truck-effect.right-to-left {
+            right: -100px; /* トラックの幅に合わせて調整 */
+            animation-name: moveRightToLeft;
+        }
+
+        /* 左から右へ走るトラック */
+        .truck-effect.left-to-right {
+            left: -100px; /* トラックの幅に合わせて調整 */
+            animation-name: moveLeftToRight;
+        }
+        
+        /* トラックが右から左へ移動するアニメーション */
+        @keyframes moveRightToLeft {
+            0% { right: -100px; } /* 画面右端外からスタート (トラックの幅で調整) */
+            100% { right: 100%; } /* 画面左端外まで移動 */
+        }
+
+        /* トラックが左から右へ移動するアニメーション */
+        @keyframes moveLeftToRight {
+            0% { left: -100px; } /* 画面左端外からスタート (トラックの幅で調整) */
+            100% { left: 100%; } /* 画面右端外まで移動 */
+        }
+
+        /* 超小刻みに上下に揺れるアニメーション */
+        @keyframes shake {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-1px) rotate(0.2deg); } /* 揺れ幅と角度を調整 */
+            50% { transform: translateY(0px) rotate(0deg); }
+            75% { transform: translateY(1px) rotate(-0.2deg); } /* 揺れ幅と角度を調整 */
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+
+        /* スライドショー用のスタイル */
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            border: 3px solid #ffe4b5; /* ミルキーなオレンジ（星のカービィの星の色） */
+            padding: 15px; /* パディングを増やす */
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.8); /* 半透明の白背景 */
+            border-radius: 20px; /* 丸みを帯びた角 */
+            box-shadow: 0 0 15px rgba(255, 228, 181, 0.5); /* 星のような光の影 */
+        }
+        .mySlides {
+            display: none;
+            text-align: center;
+        }
+        .mySlides img {
+            width: auto;
+            max-height: 400px;
+            margin: 0 auto;
+            border: none;
+            box-shadow: none;
+        }
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 15px 12px; /* パディングを調整 */
+            margin-top: -25px; /* 位置調整 */
+            color: #ff69b4; /* ホットピンク */
+            font-weight: bold;
+            font-size: 28px; /* アイコンを大きく */
+            user-select: none;
+            background-color: rgba(255, 255, 255, 0.7); /* 半透明の白背景 */
+            border: 2px solid #ffc0cb; /* ピンクの枠線 */
+            border-radius: 50%; /* 丸いボタン */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .prev:hover, .next:hover {
+            background-color: #ffc0cb; /* ホバーでピンクに */
+            color: #fff;
+            transform: scale(1.1); /* 少し拡大 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .next {
+            right: 10px; /* 位置調整 */
+        }
+        .prev {
+            left: 10px; /* 位置調整 */
+        }
+        .dot {
+            cursor: pointer;
+            height: 14px; /* 少し大きめに */
+            width: 14px;
+            margin: 0 5px; /* マージンを広げる */
+            background-color: #ffe4e1; /* 淡いピンク */
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.6s ease, transform 0.3s ease;
+            border: 1px solid #ffc0cb; /* 薄いピンクのボーダー */
+        }
+        .active, .dot:hover {
+            background-color: #ff69b4; /* アクティブとホバーでホットピンクに */
+            transform: scale(1.2); /* 少し拡大 */
+            border: 1px solid #ff1493; /* 濃いピンクのボーダー */
+        }
+        /* Fading animation は変更なし */
+
+        /* カービィ風「表示」ボタンのスタイル */
+        .kirby-button {
+            /* カービィの頬のようなピンク系のグラデーション */
+            background: linear-gradient(145deg, #ffb6c1 0%, #ff69b4 50%, #ffb6c1 100%);
+            border: 2px solid #ff1493; /* 濃いピンクの枠線 */
+            color: #ffffff; /* 白い文字色 */
+            padding: 15px 30px; /* パディングを増やし、ふわふわ感を */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 24px; /* フォントサイズを大きく */
+            font-weight: bold; /* Boldに設定 */
+            margin: 8px 5px; /* マージンを増やす */
+            cursor: pointer;
+            border-radius: 30px; /* 丸みを強調 */
+            /* 柔らかく、ポップな影 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.5); /* 柔らかい影と内側のハイライト */
+            font-family: 'Mochiy Pop P One', sans-serif; /* 見出しと同じポップなフォント */
+            letter-spacing: 2px;
+            transition: all 0.2s ease-out;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 文字に影 */
+            position: relative;
+            overflow: hidden;
+            vertical-align: middle;
+            text-transform: none; /* 大文字にしない */
+        }
+
+        .kirby-button:hover {
+            transform: translateY(-5px) scale(1.05); /* ぷくっと浮き上がって少し拡大 */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.6);
+            background: linear-gradient(145deg, #ffc0cb 0%, #ff80c0 50%, #ffc0cb 100%); /* ホバーで少し明るく */
+        }
+
+        .kirby-button:active {
+            transform: translateY(0) scale(1.0); /* 押し込んだ表現 */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        /* ホバーエフェクトの調整 (カービィのキラキラエフェクトをイメージ) */
+        .kirby-button::before {
+            content: '✔️'; /* 指の絵文字 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 0; /* 最初は非表示 */
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+            transition: all 0.5s ease-out;
+            z-index: 1; /* ボタンの上に表示 */
+        }
+
+        .kirby-button:hover::before {
+            font-size: 30px; /* 大きく表示 */
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 店舗番号入力欄のスタイル */
+        #storeNumberInput {
+            width: 140px; /* 幅を調整 */
+            height: 58px; /* 高さをボタンに合わせる */
+            padding: 10px 18px; /* パディングを調整 */
+            font-size: 22px; /* フォントサイズも大きく */
+            border: 3px solid #add8e6; /* ライトブルーのボーダー色 */
+            border-radius: 25px; /* 丸みを強調 */
+            background-color: rgba(255, 255, 255, 0.95); /* ほぼ白の背景 */
+            color: #555;
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.1); /* 柔らかい内側の影 */
+            vertical-align: middle;
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        #storeNumberInput::placeholder {
+            color: rgba(85, 85, 85, 0.5); /* プレースホルダーの色を調整 */
+        }
+        #storeNumberInput:focus {
+            border-color: #ff69b4; /* フォーカス時にピンクの枠線 */
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.1), 0 0 10px rgba(255, 105, 180, 0.5);
+            outline: none; /* デフォルトのアウトラインを消す */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="image-header">
+        <img src="1.jpg" alt="Header Image">
+    </div>
+    <!-- 統合されたフォーム -->
+    <div class="container">
+        <h1 style="text-align:center">店番入力</h1>
+        <p style="text-align:center">
+            <input type="tel" id="storeNumberInput" placeholder="半角数字">
+            <button class="kirby-button" onclick="displayAllImages()">表示</button>
+        </p>
+    </div>
+
+    <!-- 店舗カルテ画像表示エリア -->
+    <div class="container">
+        <h1 style="text-align:center">店舗カルテ</h1>
+        <img id="img1" src="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=" alt="no data">
+    </div>
+
+    <!-- 店内カルテ画像表示エリア -->
+    <div class="container">
+        <h1 style="text-align:center">店内カルテ</h1>
+        <img id="img2" src="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=" alt="no data">
+    </div>
+
+    <!-- ビルインカルテスライドショー表示エリア -->
+    <div class="container">
+        <h1 style="text-align:center">ビルインカルテ</h1>
+        <div class="slideshow-container">
+            <div id="slideshowImages">
+                <!-- 初期画像はJavaScriptで設定されるか、または空のまま -->
+                <div class="mySlides fade" style="display:block;">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=" alt="初期画像">
+                </div>
+            </div>
+            <a class="prev" onclick="plusSlides(-1)" id="prevButton">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)" id="nextButton">&#10095;</a>
+            <div style="text-align:center; margin-top: 3px;" id="slideDots">
+                <span class="dot active" onclick="currentSlide(1)"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // スライドショーのナビゲーションボタンのスタイル設定 (カービィ風に調整)
+        function setButtonStyles() {
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+
+            if (prevButton && nextButton) {
+                const baseBg = 'rgba(255, 255, 255, 0.7)'; // 半透明の白
+                const baseColor = '#ff69b4'; // ホットピンク
+                const hoverBg = '#ffc0cb'; // ホバーでピンク
+                const hoverColor = '#fff'; // ホバーで白
+                const hoverTransform = 'scale(1.1)'; // ホバーで少し拡大
+
+                // prevButton のスタイル設定
+                Object.assign(prevButton.style, { backgroundColor: baseBg, color: baseColor });
+                prevButton.addEventListener('mouseenter', () => {
+                    prevButton.style.backgroundColor = hoverBg;
+                    prevButton.style.color = hoverColor;
+                    prevButton.style.transform = hoverTransform;
+                });
+                prevButton.addEventListener('mouseleave', () => {
+                    prevButton.style.backgroundColor = baseBg;
+                    prevButton.style.color = baseColor;
+                    prevButton.style.transform = 'scale(1.0)';
+                });
+
+                // nextButton のスタイル設定
+                Object.assign(nextButton.style, { backgroundColor: baseBg, color: baseColor });
+                nextButton.addEventListener('mouseenter', () => {
+                    nextButton.style.backgroundColor = hoverBg;
+                    nextButton.style.color = hoverColor;
+                    nextButton.style.transform = hoverTransform;
+                });
+                nextButton.addEventListener('mouseleave', () => {
+                        nextButton.style.backgroundColor = baseBg;
+                        nextButton.style.color = baseColor;
+                        nextButton.style.transform = 'scale(1.0)';
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', setButtonStyles);
+
+
+        // --- 統合された画像表示関数 ---
+        function displayAllImages() {
+            const storeNumber = document.getElementById('storeNumberInput').value;
+
+            if (!storeNumber) {
+                alert("店舗番号を入力してください。");
+                return;
+            }
+
+            // 店舗カルテ画像の表示
+            const img1 = document.getElementById('img1');
+            img1.src = `店舗/${storeNumber}.jpg`;
+
+            // 店内カルテ画像の表示
+            const img2 = document.getElementById('img2');
+            img2.src = `店内/${storeNumber}.jpg`;
+
+            // ビルインカルテスライドショーの表示
+            loadSlideshowImages(storeNumber);
+        }
+
+
+        let slideIndex = 1;
+        let slideImagesCount = 0;
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('img1').src = "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=";
+            document.getElementById('img2').src = "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=";
+            document.querySelector('#slideshowImages .mySlides img').src = "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=";
+            
+            // ページロード時にトラックアニメーションを開始
+            startRandomTruckAnimation();
+        });
+
+
+        function loadSlideshowImages(folderName) {
+            const slideshowImagesContainer = document.getElementById('slideshowImages');
+            const slideDotsContainer = document.getElementById('slideDots');
+            slideshowImagesContainer.innerHTML = '';
+            slideDotsContainer.innerHTML = '';
+            slideImagesCount = 0;
+            slideIndex = 1;
+
+            const imagePromises = [];
+
+            for (let i = 1; i <= 6; i++) {
+                const imgPath = `ビルイン/${folderName}/${i}.jpg`; 
+                
+                const p = new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve({ imgPath: imgPath, loaded: true });
+                    img.onerror = () => resolve({ imgPath: imgPath, loaded: false });
+                    img.src = imgPath;
+                });
+                imagePromises.push(p);
+            }
+
+            Promise.all(imagePromises).then(results => {
+                results.forEach(result => {
+                    if (result.loaded) {
+                        const slideDiv = document.createElement('div');
+                        slideDiv.classList.add('mySlides', 'fade');
+                        
+                        const imgElement = document.createElement('img');
+                        imgElement.src = result.imgPath;
+                        imgElement.alt = `${folderName} 画像 ${slideImagesCount + 1}`; 
+                        
+                        slideDiv.appendChild(imgElement);
+                        slideshowImagesContainer.appendChild(slideDiv);
+
+                        const dotSpan = document.createElement('span');
+                        dotSpan.classList.add('dot');
+                        dotSpan.onclick = () => currentSlide(slideImagesCount + 1);
+                        slideDotsContainer.appendChild(dotSpan);
+
+                        slideImagesCount++; 
+                    }
+                });
+
+                if (slideImagesCount > 0) {
+                    showSlides(1);
+                } else {
+                    const noDataSlide = document.createElement('div');
+                    noDataSlide.classList.add('mySlides', 'fade');
+                    noDataSlide.style.display = 'block';
+                    const noDataImg = document.createElement('img');
+                    noDataImg.src = "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="; 
+                    noDataImg.alt = "no data";
+                    noDataSlide.appendChild(noDataImg);
+                    slideshowImagesContainer.appendChild(noDataSlide);
+                }
+            });
+        }
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+
+            if (slides.length === 0) return;
+
+            if (n > slides.length) {slideIndex = 1}    
+            if (n < 1) {slideIndex = slides.length}
+
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+
+            if (slides[slideIndex-1]) {
+                slides[slideIndex-1].style.display = "block";  
+            }
+            if (dots[slideIndex-1]) {
+                dots[slideIndex-1].className += " active";
+            }
+        }
+
+        // --- トラックアニメーション制御関数 ---
+        function startRandomTruckAnimation() {
+            const imageHeader = document.querySelector('.image-header');
+
+            function createAndAnimateTruck(imageSrc, directionClass, moveAnimationName) {
+                const truckEffectDiv = document.createElement('div');
+                truckEffectDiv.classList.add('truck-effect', directionClass);
+
+                const truckImg = document.createElement('img');
+                truckImg.src = imageSrc;
+                truckImg.alt = `Truck ${imageSrc.charAt(0)}`; // 例: "2.png" -> "Truck 2"
+
+                truckEffectDiv.appendChild(truckImg);
+                imageHeader.appendChild(truckEffectDiv);
+
+                const randomMoveDuration = Math.random() * (8) + 2; // 横移動の秒数
+                const shakeDuration = 0.2; // 揺れの周期を0.2秒に短縮して小刻み感を出す
+                const shakeDelay = Math.random(); // 揺れ開始のランダムな遅延
+
+                truckEffectDiv.style.animation = 
+                    `${moveAnimationName} ${randomMoveDuration}s linear forwards, ` +
+                    `shake ${shakeDuration}s ${shakeDelay}s infinite alternate linear`; // 横移動と揺れを同時に適用
+
+                // アニメーション終了後に要素を削除
+                truckEffectDiv.addEventListener('animationend', (e) => {
+                    // 横移動のアニメーションが終了した時だけ削除
+                    if (e.animationName === moveAnimationName) {
+                        truckEffectDiv.remove();
+                    }
+                });
+            }
+
+            // トラック2 (右から左) のアニメーションをランダムな間隔で開始
+            function scheduleTruck2() {
+                const randomDelay = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000; // 2秒から7秒の間
+                setTimeout(() => {
+                    createAndAnimateTruck('2.png', 'right-to-left', 'moveRightToLeft');
+                    scheduleTruck2(); // 次のトラックをスケジュール
+                }, randomDelay);
+            }
+
+            // トラック3 (左から右) のアニメーションをランダムな間隔で開始
+            function scheduleTruck3() {
+                const randomDelay = Math.floor(Math.random() * (7000 - 2000 + 1)) + 2000; // 2秒から7秒の間
+                setTimeout(() => {
+                    createAndAnimateTruck('3.png', 'left-to-right', 'moveLeftToRight');
+                    scheduleTruck3(); // 次のトラックをスケジュール
+                }, randomDelay);
+            }
+
+            // 初回のトラックをすぐに開始
+            createAndAnimateTruck('2.png', 'right-to-left', 'moveRightToLeft');
+            createAndAnimateTruck('3.png', 'left-to-right', 'moveLeftToRight');
+
+            // ランダムな間隔での出現をスケジュール
+            scheduleTruck2();
+            scheduleTruck3();
+        }
+
+    </script>
+
+</body>
+</html>
